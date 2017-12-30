@@ -12,11 +12,14 @@ connection = sqlite3.connect('data.db')
 cursor = connection.cursor()
 
 drop_table = "DROP TABLE IF EXISTS users;"
-create_table = "CREATE TABLE users (id int PRIMARY KEY,username text UNIQUE, password text);"
+create_table = "CREATE TABLE users (id INTEGER PRIMARY KEY,username text UNIQUE, password text);"
+create_table2 = "CREATE TABLE IF NOT EXISTS items (name text PRIMARY KEY, price real)"
+
 insert_query = "INSERT INTO users values (?, ?, ?)"
 
 cursor.execute(drop_table)
-cursor.execute(create_table)
+cursor.execute(create_table) #creates user table
+cursor.execute(create_table2) #creates items table
 cursor.executemany(insert_query, users)
 
 connection.commit()
