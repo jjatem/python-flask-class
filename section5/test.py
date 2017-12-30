@@ -37,5 +37,15 @@ for row in cursor.execute(select_query):
 for row in cursor.execute(select_query):
     print(row)
 
+select_single = "SELECT * FROM users WHERE username = ?"
+
+print("\n")
+print("single row selection")
+
+username = ('joffre',)
+
+for row in cursor.execute(select_single, username):
+    print(row)
+
 cursor.close()
 connection.close()
