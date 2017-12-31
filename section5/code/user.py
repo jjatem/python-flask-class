@@ -66,6 +66,11 @@ class UserRegister(Resource):
     def post(self):
         data = UserRegister.parser.parse_args()
 
+        new_username = data['username']
+
+        if User.find_by_username(new_username):
+            return {'message': "Cannot register new user. An Username with name [{}] already exists".format(new_username)}, 409
+
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
