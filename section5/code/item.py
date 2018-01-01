@@ -34,6 +34,18 @@ class Item(Resource):
         if row:
             return {'item': {'name': row[0], 'price': row[1]}}
 
+    @classmethod
+    def insert(cls, item):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        insert_query = "INSERT INTO {table_name} VALUES (?,?)".format(table_name=cls.TABLE_NAME)
+        cursor.execute(insert_query, (item['name'], item['price']))
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
     def post(self, name):
         if self.find_by_name(name):
             return {'message': "An item with name [{}] already exists".format(name)}, 409
@@ -41,15 +53,11 @@ class Item(Resource):
         data = Item.parser.parse_args()
         item = {'name': name, 'price' : data['price']}
 
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        insert_query = "INSERT INTO {table_name} VALUES (?,?)".format(table_name=Item.TABLE_NAME)
-        cursor.execute(insert_query, (item['name'], item['price']))
-        connection.commit()
-
-        cursor.close()
-        connection.close()
+        try:
+            Item.insert(item)
+        except:
+            return {"message": "An error occurred inserting the item."}
+            
         return item, 201
 
     @jwt_required()
