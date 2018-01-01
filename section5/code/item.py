@@ -54,7 +54,6 @@ class Item(Resource):
 
     @jwt_required()
     def delete(self, name):
-
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
@@ -64,7 +63,7 @@ class Item(Resource):
         connection.commit()
 
         cursor.close()
-        connection.close()        
+        connection.close()
         return {'message': 'Item deleted'}
 
     #@jwt_required()
