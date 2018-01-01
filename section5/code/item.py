@@ -39,9 +39,17 @@ class Item(Resource):
             return {'message': "An item with name [{}] already exists".format(name)}, 409
 
         data = Item.parser.parse_args()
-
         item = {'name': name, 'price' : data['price']}
-        items.append(item)
+
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        insert_query = "INSERT INTO {table_name} VALUES (?,?)".format(table_name=Item.TABLE_NAME)
+        cursor.execute(insert_query, (item['name'], item['price']))
+        connection.commit()
+
+        cursor.close()
+        connection.close()
         return item, 201
 
     @jwt_required()
