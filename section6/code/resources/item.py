@@ -49,21 +49,17 @@ class Item(Resource):
     #@jwt_required()
     def put(self, name):
         data = Item.parser.parse_args()
-        item = ItemModel.find_by_name(name)
-        updated_item =  ItemModel(name, data['price'])
-        if item is None:
-            try:
-                updated_item.insert()
-            except:
-                return {"message": "An error occurred inserting the item."}, 500
-        else:
-            try:
-                updated_item.update()
-            except:
-                raise
-                return {"message": "An error occurred updating the item."}, 500
 
-        return updated_item.json()
+        item = ItemModel.find_by_name(name)
+
+        if item:
+            item.price = data['price']
+        else:
+            item = ItemModel(name, data['price'])
+
+        item.save_to_db()
+
+        return item.json()
 
 
 class ItemList(Resource):
