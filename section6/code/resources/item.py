@@ -25,31 +25,26 @@ class Item(Resource):
 
     def post(self, name):
         if ItemModel.find_by_name(name):
-            return {'message': "An item with name [{}] already exists".format(name)}, 409
+            return {'message': "An item with name '{}' already exists.".format(name)}, 400
 
         data = Item.parser.parse_args()
+
         item = ItemModel(name, data['price'])
 
         try:
-            item.insert()
+            item.save_to_db()
         except:
-            return {"message": "An error occurred inserting the item."}, 500 #internal server error
+            return {"message": "An error occurred inserting the item."}, 500
 
         return item.json(), 201
 
     @jwt_required()
     def delete(self, name):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
+        item = Item.find_by_name(name)
+        if item:
+            ItemModel.delete_from_db(item)
 
-        delete_query = "DELETE FROM {table_name} WHERE name = ?".format(table_name=Item.TABLE_NAME)
-
-        cursor.execute(delete_query, (name,))
-        connection.commit()
-
-        cursor.close()
-        connection.close()
-        return {'message': 'Item deleted'}
+        return {"message": "Item [{}] has successfully been deleted.".format(name)}, 200
 
     #@jwt_required()
     def put(self, name):

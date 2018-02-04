@@ -5,7 +5,9 @@ users = [
     (2,'joffre', 'test01'),
     (3,'Sandy','test01'),
     (4,'John','test01'),
-    (5,'Kate','test01')
+    (5,'Kate','test01'),
+    (6,'ubnt','ubnt'),
+    (7,'ubnt77','ubnt77')
 ]
 
 connection = sqlite3.connect('data.db')
@@ -13,7 +15,7 @@ cursor = connection.cursor()
 
 drop_table = "DROP TABLE IF EXISTS users;"
 create_table = "CREATE TABLE users (id INTEGER PRIMARY KEY,username text UNIQUE, password text);"
-create_table2 = "CREATE TABLE IF NOT EXISTS items (name text PRIMARY KEY, price real)"
+create_table2 = "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY, name text, price real);"
 
 insert_query = "INSERT INTO users values (?, ?, ?)"
 
