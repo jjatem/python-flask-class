@@ -14,6 +14,10 @@ class UserModel(db.Model):
     def __str__(self):
         return "UserId={}, Username={}, Password={}.".format(self.id, self.username, self.password)
 
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
     @classmethod
     def find_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
@@ -21,9 +25,5 @@ class UserModel(db.Model):
     @classmethod
     def find_by_userid(cls, _id):
         return cls.query.filter_by(id=_id).first()
-
-    def save_to_db(self):
-        db.session.add(self)
-        db.session.commit()
 
 #test code => u = User.find_by_username("joffre") print(u)

@@ -1,12 +1,8 @@
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required, current_identity
 from models.item import ItemModel
-import sqlite3
-
-items = []
 
 class Item(Resource):
-    TABLE_NAME = 'items'
 
     parser = reqparse.RequestParser()
     parser.add_argument('price',
@@ -63,19 +59,6 @@ class Item(Resource):
 
 
 class ItemList(Resource):
-    TABLE_NAME = 'items'
 
     def get(self):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "SELECT * FROM {table}".format(table=self.TABLE_NAME)
-        result = cursor.execute(query)
-
-        items = []
-        for row in result:
-            items.append({'name': row[1], 'price': row[2]})
-
-        connection.close()
-
-        return {'items': items}
+        return {'items': [item.json() for item in ItemModel.query.all()]}
