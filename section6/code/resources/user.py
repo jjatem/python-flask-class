@@ -1,4 +1,3 @@
-import sqlite3
 from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 from models.user import UserModel
@@ -19,19 +18,10 @@ class UserRegister(Resource):
     def post(self):
         data = UserRegister.parser.parse_args()
 
-        new_username = data['username']
-
-        if UserModel.find_by_username(new_username):
+        if UserModel.find_by_username(data['username']):
             return {'message': "Cannot register new user. An Username with name [{}] already exists".format(new_username)}, 409
 
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        insert_query = "INSERT INTO users VALUES (NULL, ?, ?)"
-        result = cursor.execute(insert_query, (data['username'], data['password']))
-
-        connection.commit()
-        cursor.close()
-        connection.close()
+        user = UserModel(data['username'], data['password'])
+        user.save_to_db()
 
         return {'message':"User created successfully."}, 201
