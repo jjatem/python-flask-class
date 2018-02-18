@@ -11,6 +11,12 @@ class Item(Resource):
         help="This field cannot be left blank and it has to be a valid Float number!"
     )
 
+    parser.add_argument('store_id',
+        type=int,
+        required=True,
+        help="Every item needs to be associated with a Store. Please specify the Store ID!"
+    )
+
     @jwt_required()
     def get(self, name):
         item = ItemModel.find_by_name(name)
@@ -25,7 +31,7 @@ class Item(Resource):
 
         data = Item.parser.parse_args()
 
-        item = ItemModel(name, data['price'])
+        item = ItemModel(name, data['price'], data['store_id'])
 
         try:
             item.save_to_db()
@@ -51,7 +57,7 @@ class Item(Resource):
         if item:
             item.price = data['price']
         else:
-            item = ItemModel(name, data['price'])
+            item = ItemModel(name, data['price'], data['store_id'])
 
         item.save_to_db()
 
